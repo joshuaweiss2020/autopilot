@@ -6,7 +6,7 @@
 '''
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-import moveControl.move as move
+import moveControl.server.move as move
 
 class CtrlServer:
     def __init__(self):
