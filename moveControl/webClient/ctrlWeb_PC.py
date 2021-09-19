@@ -7,7 +7,6 @@ with open("adr.json", "r") as f:
     IP = json.load(f)
 
 times= 3
-speed=30
 url = "{}:8080".format(IP)
 
 html = '''
@@ -18,7 +17,6 @@ html = '''
 <title> AutoPilot by Joshua</title>
 <link href="alex_css.css" rel="stylesheet" type="text/css" />
 </head>
-
 <script type="text/javascript">
 
 //---------------------------????--------------------
@@ -58,50 +56,20 @@ function imageOnclick() {{ // Clicking on the image will pause the stream
 //----------------------AJAX ???? --------------------------
 
 function car_action(cmd) {{
-  var speed = document.getElementById("speed").value
-
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {{
     if (this.readyState == 4 && this.status == 200) {{
       document.getElementById("info").innerHTML = this.responseText;
     }}
   }};
-  xhttp.open("GET", "./ctrlWebAction.py?action=" + cmd + "&speed=" + speed, true);
+  xhttp.open("GET", "./ctrlWebAction.py?action=" + cmd, true);
   xhttp.send();
 }}
-//__________________________________________ by joshua
-function chgSpeed(chgVal){{
-//change speed 
-    speedVal = parseInt(document.getElementById("speed").value)
-    speedVal  += chgVal
-    document.getElementById("speed").value = speedVal
-}}
-
-var timeID = 0
-var i=0
-function t()
-{{
- 
-}}
-function takePhoto(){{
-//take one photo 
-    if (timeID) clearTimeout(timeID)
-    car_action('camera_takePhoto')
-}}
-function collectPhotos(){{
-//take photo per 2s
-     //timeID = setTimeout("car_action('camera_takePhoto')", 2000)
-     car_action('camera_takePhoto')
-     document.getElementById("photo").innerHTML = (++i) + ""
-     timeID = setTimeout("collectPhotos()", 1000)
-}}
-
-
 </script>
 
 
-<body onload="createImageLayer();" class="noselect">
-<table width="960" border="0" cellspacing="0" cellpadding="0" class="noselect">
+<body onload="createImageLayer();">
+<table width="960" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td colspan="4" align="center"><table width="640" border="0" cellspacing="0" cellpadding="0">
       <tr>
@@ -116,7 +84,7 @@ function collectPhotos(){{
   <tr>
     <td colspan="2" align="center"><p id="info"></p></td>
     <td align="center"><a href='webList.py' class="STYLE1">Pictures</a></td>
-    <td align="center"><input type="button" name="exit" value="EXIT" accesskey="b" ontouchstart="car_action('destory')"/></td>
+    <td align="center"><input type="button" name="exit" value="EXIT" accesskey="b" onclick="car_action('destory')"/></td>
   </tr>
   <tr>
     <td><table width="300" border="0" bordercolor="0" class="table1">
@@ -127,23 +95,23 @@ function collectPhotos(){{
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td align="center"><input name="up" type="button" class="button" accesskey="w" ontouchstart="car_action('car_up')" ontouchend="car_action('car_stop')" value="FORWARD"/></td>
+        <td align="center"><input name="up" type="button" class="button" accesskey="w" onmousedown="car_action('car_up')" onmouseup="car_action('car_stop')" value="FORWARD"/></td>
         <td>&nbsp;</td>
       </tr>
       <tr>
-        <td><input name="left" type="button" class="button" accesskey="a" ontouchstart="car_action('car_left')"  ontouchend="car_action('car_stop')" value="LEFT" /></td>
-        <td align="center"><input name="down" type="button" class="button" accesskey="x" ontouchstart="car_action('car_stop')" value="STOP"/></td>
-        <td align="right"><input name="right" type="button" class="button" accesskey="d" ontouchstart="car_action('car_right')" ontouchend="car_action('car_stop')" value="RIGHT"/></td>
+        <td><input name="left" type="button" class="button" accesskey="a" onmousedown="car_action('car_left')" onmouseup="car_action('car_stop')" value="LEFT" /></td>
+        <td align="center"><input name="down" type="button" class="button" accesskey="x" onclick="car_action('car_stop')" value="STOP"/></td>
+        <td align="right"><input name="right" type="button" class="button" accesskey="d" onmousedown="car_action('car_right')" onmouseup="car_action('car_stop')" value="RIGHT"/></td>
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td align="center"><input name="down" type="button" class="button" accesskey="s" ontouchstart="car_action('car_down')"  ontouchend="car_action('car_stop')" value="BACK"/></td>
+        <td align="center"><input name="down" type="button" class="button" accesskey="s" onmousedown="car_action('car_down')" onmouseup="car_action('car_stop')" value="BACK"/></td>
         <td>&nbsp;</td>
       </tr>
       <tr>
-        <td><input name="speedIncrease" type="button" class="button" value="+" ontouchstart="chgSpeed(2)"/></td>
-        <td align="center"><input type='text' class="button" name='speed' id='speed' value='{}'/></td>
-        <td><input name="speedDecrease" type="button" class="button" value="-" ontouchstart="chgSpeed(-2)"/></td>
+        <td><input name="speedIncrease" type="button" class="button" value="+" /></td>
+        <td align="center">{}</td>
+        <td><input name="speedDecrease" type="button" class="button" value="-" /></td>
       </tr>
     </table></td>
     <td>&nbsp;</td>
@@ -155,24 +123,23 @@ function collectPhotos(){{
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td align="center"><input name="up2" type="button" class="button" accesskey="i" ontouchstart="car_action('camera_up')"  ontouchend="car_action('camera_stop')" value="UP"/>        </td>
+        <td align="center"><input name="up2" type="button" class="button" accesskey="i" onmousedown="car_action('camera_up')"  onmouseup="car_action('camera_stop')" value="FORWARD"/>        </td>
         <td>&nbsp;</td>
       </tr>
       <tr>
-        <td><input name="left2" type="button" class="button" accesskey="j" ontouchstart="car_action('camera_left')" ontouchend="car_action('camera_stop')" value="LEFT"/></td>
-        <td align="center"><input name="down2" type="button" class="button" accesskey="m" ontouchstart="car_action('camera_lookRoad')" value="LOOKROAD"/>
+        <td><input name="left2" type="button" class="button" accesskey="j" onmousedown="car_action('camera_left')" onmouseup="car_action('camera_stop')" value="LEFT"/></td>
+        <td align="center"><input name="down2" type="button" class="button" accesskey="m" onclick="car_action('camera_stop')" value="STOP"/>
             <br /></td>
-        <td align="right"><input name="right2" type="button" class="button" accesskey="l" ontouchstart="car_action('camera_right')"  ontouchend="car_action('camera_stop')" value="RIGHT"/></td>
+        <td align="right"><input name="right2" type="button" class="button" accesskey="l" onmousedown="car_action('camera_right')"  onmouseup="car_action('camera_stop')" value="RIGHT"/></td>
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td align="center"><input name="down22" type="button" class="button" accesskey="k" ontouchstart="car_action('camera_down')"  ontouchend="car_action('camera_stop')" value="DOWN"/></td>
+        <td align="center"><input name="down22" type="button" class="button" accesskey="k" onmousedown="car_action('camera_down')"  onmouseup="car_action('camera_stop')" value="BACK"/></td>
         <td align="center"></td>
       </tr>
       <tr>
-        <td align="center"><input name="takePhoto" type="button" class="button"  accesskey="p" ontouchstart="takePhoto()" value="Take Photo"/></td>
-        <td align="center"><input name="collectPhotos" id="collectPhotos" type="button" class="button"  accesskey="p" ontouchstart="collectPhotos()" value="Collect Photos"/></td>
-        <td align="center"><input name="reset" type="button" class="button" accesskey="v" ontouchstart="car_action('camera_reset')" value="RESET"/></td>
+        <td colspan="2" align="center"><input name="takePhoto" type="button" class="button"  accesskey="p" onclick="car_action('camera_takePhoto')" value="Take Photo"/></td>
+        <td align="center"><input name="reset" type="button" class="button" accesskey="v" onclick="car_action('camera_reset')" value="RESET"/></td>
       </tr>
     </table></td>
   </tr>
@@ -180,7 +147,7 @@ function collectPhotos(){{
     <td colspan="4">&nbsp;</td>
   </tr>
   <tr>
-    <td colspan="4">&nbsp;<p id='photo'>0</p></td>
+    <td colspan="4">&nbsp;</td>
   </tr>
 </table>
 
@@ -210,13 +177,7 @@ function collectPhotos(){{
 	color: #99FF00;
 	text-align: center;
 }}
-.noselect {{
-
--webkit-touch-callout: none; 
-
--webkit-user-select: none; 
-}}
 </style>
 
-'''.format(url,url,speed)
+'''.format(url,url,times)
 print(html)

@@ -8,11 +8,17 @@
 from xmlrpc.client import ServerProxy
 # import moveControl.move
 import time
+import json
+from urllib.request import urlretrieve
+import os
+
 
 class CtrlClient:
     def __init__(self):
-        self.server = ServerProxy('http://192.168.1.100:8989')
 
+        with open("adr.json", "r") as f:
+            self.IP = json.load(f)
+        self.server = ServerProxy('http://{}:8989'.format(self.IP))
 
     def callAction(self,action,speed=30,t_time=0):
         '''调用服务器端动作
@@ -51,9 +57,47 @@ class CtrlClient:
 
 # 测试
 if __name__ == "__main__":
-    ctrlClient = CtrlClient()
+    # ctrlClient = CtrlClient()
     # ctrlClient.callAction("camera_left",1)
     # ctrlClient.callAction("camera_stop", 0)
-    ctrlClient.callAction("camera_reset")
+    # ctrlClient.callAction("camera_reset")
+    # IP = "192.168.1.100"
+    # with open("adr.json", "w") as f:
+    #     json.dump(IP,f)
+
+
+    with open("../adr.json", "r") as f:
+        IP = json.load(f)
+        print(IP)
+
+    img_url = "http://{}:8080/?action=snapshot".format(IP)
+    print(img_url)
+    dir = os.path.abspath('.') + "\\img"
+    now_str = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
+    # dir = "C:\\"
+    picName = now_str+'.jpg'
+    work_path = os.path.join(dir, picName)
+    print(work_path)
+    urlretrieve(img_url, work_path)
+
+    with open("picNames.txt","a") as f:
+        f.write(picName + "\n")
+
+    with open("picNames.txt","r") as f:
+        lines = f.read().splitlines()
+        print(lines)
+
+    print(int(len(lines)/3))
+
+
+    # picNameDic = {"name":[picName]}
+    # with open("picNames.json", "a") as f:
+    #     json.dump(picNameDic, f)
+    #
+    # with open("picNames.json", "r") as f:
+    #     s = json.load(f)
+    #     print(s)
+
+
 
 

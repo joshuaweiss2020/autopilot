@@ -7,11 +7,19 @@
 import RPi.GPIO as GPIO
 import time
 import Adafruit_PCA9685
+import json
+# from urllib.request import urlretrieve
+import urllib
+
+import os
 
 
 class MovingCar:
 
     def __init__(self):
+        with open("../adr.json", "r") as f:
+            self.IP = json.load(f)
+
         # 左边两轮引脚
         self.PWMA = 18
         self.AIN1 = 22
@@ -123,12 +131,12 @@ class MovingCar:
         self.set_servo_angle(self.LR, 150)
         time.sleep(t_time)
 
-    def camera_up(self,speed,t_time=0):
-        self.set_servo_angle(self.UD, 120)
+    def camera_down(self,speed,t_time=0):
+        self.set_servo_angle(self.UD, 175)
         time.sleep(t_time)
 
-    def camera_down(self,speed,t_time=0):
-        self.set_servo_angle(self.UD, 0)
+    def camera_up(self,speed,t_time=0):
+        self.set_servo_angle(self.UD, 80)
         time.sleep(t_time)
 
     def camera_reset(self,speed,t_time=0):
@@ -138,9 +146,30 @@ class MovingCar:
         time.sleep(1)
         self.camera_stop()
 
+    def camera_lookRoad(self,speed,t_time=0):
+        self.set_servo_angle(self.LR, 90)
+        time.sleep(1)
+        self.set_servo_angle(self.UD, 120)
+        time.sleep(1)
+        self.camera_stop()
+
     def camera_stop(self,speed=0,t_time=0):
         self.pwm.set_pwm(self.UD, 0, 0)
         self.pwm.set_pwm(self.LR, 0, 0)
+
+    def camera_takePhoto(self,speed=0,t_time=0):
+        '拍照'
+
+        img_url = "http://{}:8080/?action=snapshot".format(self.IP)
+        # print(img_url)
+        dir = os.path.abspath('../.') + "/img"
+        now_str = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
+        picName = now_str + '.jpg'
+        work_path = os.path.join(dir, picName)
+        # print(work_path)
+        urllib.urlretrieve(img_url, work_path)
+        with open("../picNames.txt", "a") as f:
+            f.write(picName + "\n")
 
     def destroy(self,speed=0,t_time=0):
         self.enable = False

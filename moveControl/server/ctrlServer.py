@@ -6,11 +6,14 @@
 '''
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-import moveControl.server.move as move
-
+import move
+import json
+import socket
 class CtrlServer:
     def __init__(self):
-        self.server = SimpleXMLRPCServer(("",8989))
+        with open("../adr.json", "r") as f:
+            self.IP = json.load(f)
+        self.server = SimpleXMLRPCServer((self.IP,8989),allow_none=True)
         #self.server.register_instance(self)
         #self.server.serve_forever()
 
@@ -18,9 +21,18 @@ class CtrlServer:
 
 # 测试
 if __name__ == "__main__":
+    # IP = "192.168.1.100"
+    # with open("adr.json", "w") as f:
+    #     json.dump(IP,f)
     ctrlServer = CtrlServer()
     movingCar = move.MovingCar()
     ctrlServer.server.register_instance(movingCar)
     print("Server is up....")
+    # 获取本机计算机名称
+    hostname = socket.gethostname()
+    # 获取本机ip
+    ip = socket.gethostbyname(hostname)
+    print(ip)
+
     ctrlServer.server.serve_forever()
-    
+
