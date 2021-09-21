@@ -203,6 +203,7 @@ class MovingCar:
             f.write(picName + "\n")
 
     def autoPilot(self, speed=0, t_time=0):
+        self.camera_lookRoad(0,0)
         self.video_capture = cv2.VideoCapture(0)
         print("video:", self.video_capture.isOpened())
 
@@ -225,6 +226,7 @@ class MovingCar:
                     print("move back")
                 else:
                     self.enableAP = False
+                    self.car_stop(0,0)
                     print("can't find track,exits")
                     break
             elif orderDataX > self.APTolerance :
@@ -298,6 +300,7 @@ class MovingCar:
 
     def destroy(self, speed=0, t_time=0):
         self.enable = False
+        self.enableAP = False
         self.camera_stop()
         self.L_Motor.stop()
         self.R_Motor.stop()

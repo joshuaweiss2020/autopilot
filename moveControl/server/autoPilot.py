@@ -2,6 +2,7 @@
 import cv2
 import numpy as np
 import os
+import time
 
 
 def imagePre(img):
@@ -58,8 +59,19 @@ def findTarget(contours, img):
               "cX:", target_cX, "cY:", target_cX)
 
         cv2.circle(img, (center_cX, target_cY), 3, (0, 0, 255), -1)
-        cv2.imshow("img",img)
-        cv2.waitKey()
+
+        dir = os.path.abspath('../.') + "/img/AP"
+        now_str = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
+        picName = now_str + '.jpg'
+        work_path = os.path.join(dir, picName)
+        cv2.imwrite(work_path,img)
+        with open("../AP_picNames.txt", "a") as f:
+            f.write(picName + "\n")
+        work_path = os.path.join(dir, "now.jpg")
+        cv2.imwrite(work_path, img)
+
+        # cv2.imshow("img",img)
+        # cv2.waitKey()
     ############################################
 
     return target_cX, target_cY
