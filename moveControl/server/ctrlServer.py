@@ -9,6 +9,7 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 import move
 import json
 import socket
+import cv2
 class CtrlServer:
     def __init__(self):
         with open("../adr.json", "r") as f:
@@ -26,6 +27,11 @@ if __name__ == "__main__":
     #     json.dump(IP,f)
     ctrlServer = CtrlServer()
     movingCar = move.MovingCar()
+   # movingCar.destroy()
+#    movingCar.video_capture = cv2.VideoCapture(0)
+#    movingCar.video_capture.release()
+#    
+#    print("video:", movingCar.video_capture.isOpened())
     ctrlServer.server.register_instance(movingCar)
     print("Server is up....")
     # 获取本机计算机名称
