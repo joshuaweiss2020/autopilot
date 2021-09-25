@@ -17,7 +17,10 @@ for k in conf.keys():
       </tr>
     '''.format(k,conf[k])
 
-speed = 30
+with open("./AP_picNames.txt", "r") as f:
+    filenames = f.read().splitlines()
+
+speed = 40
 
 
 html = '''
@@ -45,6 +48,19 @@ function car_action(cmd) {{
   xhttp.open("GET", "./ctrlWebAction.py?action=" + cmd + "&speed=" + speed, true);
   xhttp.send();
 }}
+
+function change_pic() {{
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {{
+    if (this.readyState == 4 && this.status == 200) {{
+        document.getElementById("info").innerHTML = this.responseText;
+        document.getElementById("cam").src = "../img/AP/" + this.responseText;
+    }}
+  }};
+  xhttp.open("GET", "./ctrlWebAction.py?action=getLastestPic&speed=0", true);
+  xhttp.send();
+}}
+
 //__________________________________________ by joshua
 function chgSpeed(chgVal){{
 //change speed
@@ -74,8 +90,9 @@ function collectPhotos(){{
 }}
 
 function changePhoto(){{
-     document.getElementById("cam").src = "../img/AP/now.jpg"
-     changePhoto_timeID = setTimeout("changePhoto()", 1000)
+     // document.getElementById("cam").src = "../img/AP/now.jpg"
+     //change_pic()
+     //changePhoto_timeID = setTimeout("changePhoto()", 3000)
 }}
 
 function stopChangePhoto(){{
@@ -105,7 +122,7 @@ function stopChangePhoto(){{
     <td width="160" height="288" align="center"><input name="APStart" type="button" class="button" id="APStart" accesskey="b" value="AP START" ontouchstart="car_action('autoPilot');changePhoto()"/></td>
   </tr>
   <tr>
-    <td align="center"><input name="APStop" type="button" class="button" id="APStop" accesskey="b" value="AP STOP" ontouchstart="car_action('destory')"/></td>
+    <td align="center"><input name="APStop" type="button" class="button" id="APStop" accesskey="b" value="AP STOP" ontouchstart="car_action('destroy');stopChangePhoto()"/></td>
   </tr>
   <tr>
     <td colspan="2" align="center">&nbsp;</td>
@@ -114,7 +131,7 @@ function stopChangePhoto(){{
   <tr>
     <td colspan="2" align="center"><p id="info"></p></td>
     <td align="center"><a href='webAPPicList.py' class="wordStyle">Pictures</a></td>
-    <td align="center"><input type="button" name="exit" value="EXIT" accesskey="b" ontouchstart="car_action('destory')"/></td>
+    <td align="center"><input type="button" name="exit" value="EXIT" accesskey="b" ontouchstart="car_action('destroy')"/></td>
   </tr>
   <tr>
     <td colspan="4"><table width="100%" border="0" cellspacing="0" cellpadding="0">

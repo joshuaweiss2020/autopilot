@@ -60,7 +60,7 @@ class MovingCar:
         # 自动驾驶 重新寻道次数
         self.APMissTimes = 6
         
-        self.setup()
+        # self.setup()
 
     def set_servo_angle(self, channel, angle):
         '''舵机角度处理函数'''
@@ -211,8 +211,9 @@ class MovingCar:
         self.enableAP = True
         while self.video_capture.isOpened() and self.enableAP:
             ret, image = self.video_capture.read()
-            #            print("img:",image.shape)
             contours, image = ap.imagePre(image)
+
+            if(len(contours)) == 0: continue
 
             cX, cY = ap.findTarget(contours, image)
 
@@ -246,6 +247,13 @@ class MovingCar:
             # if key == 32: break
         self.video_capture.release()
 
+    def getLastestPic(self,speed=0, t_time=0):
+        """取得最新一张在AP状态下保存的图片名称"""
+        with open("../AP_picNames.txt", "r") as f:
+            filenames = f.read().splitlines()
+            filenames.reverse()
+        print(filenames[0])
+        return filenames[0]
 
     def autoPilot_sim(self,speed=0, t_time=0):
         self.enableAP = True
@@ -324,7 +332,8 @@ class MovingCar:
 if __name__ == "__main__":
     m = MovingCar()
     try:
-        m.callback("autoPilot_sim", 3)
+        m.getLastestPic()
+        # m.callback("autoPilot_sim", 3)
 
         # while True:
         #     m.car_up(30, 3)
@@ -335,3 +344,4 @@ if __name__ == "__main__":
     finally:
         print("destroy")
         m.destroy()
+        # m.destroy()

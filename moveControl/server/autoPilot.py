@@ -20,6 +20,8 @@ def imagePre(img):
 
 def findTarget(contours, img):
     """找到路径中心点，返回x,y坐标"""
+    savedFlag = 0 # 记录要保存图片的环节 0-画所有轮廓 1-画符合条件的轮廓 2-画找到导航点的轮廓
+
     target_cY = -1
     target_cX = -1
     target_idx = -1
@@ -34,10 +36,12 @@ def findTarget(contours, img):
 
         # 设定符合轮廓的条件
         if points < 500 and 1000 < area < 10000 and length >= 180:
+            savedFlag = 1
             cX, cY = findCenter(contours[i])
             # print("\n target_idx:",target_idx," target_length:",
             # target_length,"area:",target_area,"target_cY:",target_cY)
             # print(i, ":", len(contours[i]),"length:",length,"area:",area,"cX?",cX,"cY:",cY,"\n")
+            drawAndSavePic(img, contours, cX ,cY ,str(i),length,area)
 
             # 在轮廓中选取：1.较靠底部 2相同周长所围面积较大 3 不能离顶部太近
             if (cY > target_cY or (length < target_length and area > target_area)
@@ -49,30 +53,16 @@ def findTarget(contours, img):
                 target_length = length
 
         #########################标记#################
-    if target_idx >= 0:  # 如果找到
-        center_cX =320
-        cv2.drawContours(img, contours[target_idx], -1, (0, 0, 255), 5)
-        cv2.circle(img, (target_cX, target_cY), 3, (0, 255, 0), -1)
-        cv2.putText(img, str(target_idx), (target_cX - 20, target_cY - 20),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
-        print("idx:", target_idx, "points:", len(contours[target_idx]), "length:", target_length, "area:", target_area,
-              "cX:", target_cX, "cY:", target_cX)
+    if target_idx >= 0:  # 如果找到导航点
+        savedFlag = 2
+        drawAndSavePic(img, contours, target_cX, target_cY, str(target_idx), length, area,isTarget=True)
 
-        cv2.circle(img, (center_cX, target_cY), 3, (0, 0, 255), -1)
-
-        dir = os.path.abspath('../.') + "/img/AP"
-        now_str = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-        picName = now_str + '.jpg'
-        work_path = os.path.join(dir, picName)
-        cv2.imwrite(work_path,img)
-        with open("../AP_picNames.txt", "a") as f:
-            f.write(picName + "\n")
-        work_path = os.path.join(dir, "now.jpg")
-        cv2.imwrite(work_path, img)
 
         # cv2.imshow("img",img)
         # cv2.waitKey()
     ############################################
+    if savedFlag == 0:
+        drawAndSavePic(img,contours)
 
     return target_cX, target_cY
 
@@ -102,3 +92,36 @@ def findCenter(c):
     #                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
     return cX, cY
+
+def drawAndSavePic(img, contours,cX=0 ,cY=0 ,idx=-1 ,length=-1,area=-1,isTarget=False):
+    print("drawAndSavePic,idx:",idx)
+    """画轮廓，并保存图片"""
+    center_cX = 320
+    cv2.drawContours(img, contours, -1, (0, 0, 255), 5)
+    msg = "no match contours"
+
+    if idx >=0:
+        cv2.circle(img, (cX, cY), 3, (0, 255, 0), -1)
+        cv2.circle(img, (center_cX, cY), 3, (0, 0, 255), -1)
+        msg = "no nav points:" + idx
+
+    if isTarget:
+        msg = "this is nav point:" + idx
+
+    cv2.putText(img, msg, (cX + 20, cY + 20),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+
+    print("idx:", idx, "points:", len(contours[idx]), "length:", length, "area:", area,
+          "cX:", cX, "cY:", cX)
+
+
+
+    dir = os.path.abspath('../.') + "/img/AP"
+    now_str = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
+    picName = now_str + '.jpg'
+    work_path = os.path.join(dir, picName)
+    cv2.imwrite(work_path, img)
+    with open("../AP_picNames.txt", "a") as f:
+        f.write(picName + "\n")
+    # work_path = os.path.join(dir, "now.jpg")
+    # cv2.imwrite(work_path, img)

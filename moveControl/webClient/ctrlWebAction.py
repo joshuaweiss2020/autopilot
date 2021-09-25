@@ -20,6 +20,8 @@ if not client.server.isEnable():
     except Exception:
         pass
 
-client.callAction(action, speed, 0)
-
-print("action:", form.getvalue('action', 'unkown'))
+returnVal = client.callAction(action, speed, 0)
+if not returnVal:
+    print("action:", form.getvalue('action', 'unkown'))
+else:
+    print(str(returnVal))
