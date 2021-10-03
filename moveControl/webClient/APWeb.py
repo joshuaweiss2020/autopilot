@@ -91,9 +91,9 @@ function collectPhotos(){{
 
 function changePhoto(){{
      //document.getElementById("cam").src = "../img/AP/now.jpg"
-     document.getElementById("photo").innerHTML = "stop"
-     change_pic()
-     changePhoto_timeID = setTimeout("changePhoto()", 3000)
+//     document.getElementById("photo").innerHTML = "stop"
+//     change_pic()
+//     changePhoto_timeID = setTimeout("changePhoto()", 3000)
 }}
 
 function stopChangePhoto(){{

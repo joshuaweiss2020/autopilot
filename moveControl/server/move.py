@@ -14,7 +14,7 @@ import urllib
 import cv2
 import os
 import autoPilot as ap
-
+import traceback
 
 class MovingCar:
 
@@ -206,16 +206,18 @@ class MovingCar:
         self.camera_lookRoad(0,0)
         self.video_capture = cv2.VideoCapture(0)
         print("video:", self.video_capture.isOpened())
+        time.sleep(2)
 
         miss_times = 0 # 找不到路径次数
         self.enableAP = True
         while self.video_capture.isOpened() and self.enableAP:
             ret, image = self.video_capture.read()
             contours, image = ap.imagePre(image)
-
             if(len(contours)) == 0: continue
-
-            cX, cY = ap.findTarget(contours, image)
+            try:
+                cX, cY = ap.findTarget(contours, image)
+            except Exception as e:
+                traceback.print_exc()
 
             orderDataX, orderDataY = ap.makeOrder(cX, cY)
 
