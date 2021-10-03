@@ -15,6 +15,8 @@ class CtrlServer:
         with open("../adr.json", "r") as f:
             self.IP = json.load(f)
         self.server = SimpleXMLRPCServer((self.IP,8989),allow_none=True)
+
+  
         #self.server.register_instance(self)
         #self.server.serve_forever()
 
@@ -27,18 +29,21 @@ if __name__ == "__main__":
     #     json.dump(IP,f)
     ctrlServer = CtrlServer()
     movingCar = move.MovingCar()
+   
    # movingCar.destroy()
 #    movingCar.video_capture = cv2.VideoCapture(0)
 #    movingCar.video_capture.release()
 #    
 #    print("video:", movingCar.video_capture.isOpened())
     ctrlServer.server.register_instance(movingCar)
-    print("Server is up....")
+
+    print("Server 8080 is up....")
     # 获取本机计算机名称
     hostname = socket.gethostname()
     # 获取本机ip
     ip = socket.gethostbyname(hostname)
     print(ip)
 
+#    ctrlServer.server1.serve_forever()
     ctrlServer.server.serve_forever()
 

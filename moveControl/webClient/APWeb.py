@@ -57,7 +57,7 @@ function change_pic() {{
         document.getElementById("cam").src = "../img/AP/" + this.responseText;
     }}
   }};
-  xhttp.open("GET", "./ctrlWebAction.py?action=getLastestPic&speed=0", true);
+  xhttp.open("GET", "./picWebAction.py?action=getLastestPic&speed=0", true);
   xhttp.send();
 }}
 
@@ -90,9 +90,10 @@ function collectPhotos(){{
 }}
 
 function changePhoto(){{
-     // document.getElementById("cam").src = "../img/AP/now.jpg"
-     //change_pic()
-     //changePhoto_timeID = setTimeout("changePhoto()", 3000)
+     //document.getElementById("cam").src = "../img/AP/now.jpg"
+     document.getElementById("photo").innerHTML = "stop"
+     change_pic()
+     changePhoto_timeID = setTimeout("changePhoto()", 3000)
 }}
 
 function stopChangePhoto(){{
