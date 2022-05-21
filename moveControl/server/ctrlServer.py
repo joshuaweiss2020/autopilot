@@ -45,5 +45,9 @@ if __name__ == "__main__":
     print(ip)
 
 #    ctrlServer.server1.serve_forever()
-    ctrlServer.server.serve_forever()
-
+    try:
+        ctrlServer.server.serve_forever()
+    except KeyboardInterrupt:
+        movingCar.destroy()
+        ctrlServer.server.shutdown()
+        print("destroy and exit")

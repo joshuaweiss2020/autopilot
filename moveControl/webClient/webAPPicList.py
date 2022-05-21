@@ -3,7 +3,7 @@ import cgitb;cgitb.enable()
 print('Content-type: text/html\n')
 
 #???????
-with open("APPicNames.txt", "r") as f:
+with open("AP_picNames.txt", "r") as f:
     filenames = f.read().splitlines()
     filenames.reverse()
 

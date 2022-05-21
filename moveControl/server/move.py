@@ -202,7 +202,13 @@ class MovingCar:
         with open("../picNames.txt", "a") as f:
             f.write(picName + "\n")
 
-    def autoPilot(self, speed=0, t_time=0):
+    # 根据超声波、红外、激光传感器实现全自动驾驶
+    def autoPilot(self,speed=0,t_time=0):
+        pass
+
+
+    # 根据车道作图像识别，实现全自动驾驶
+    def autoPilot2(self, speed=0, t_time=0):
         self.camera_lookRoad(0,0)
         self.video_capture = cv2.VideoCapture(0)
         print("video:", self.video_capture.isOpened())
@@ -210,16 +216,33 @@ class MovingCar:
 
         miss_times = 0 # 找不到路径次数
         self.enableAP = True
+        
+        run_times = 0
+        finish_times = 0
+        
         while self.video_capture.isOpened() and self.enableAP:
             ret, image = self.video_capture.read()
             contours, image = ap.imagePre(image)
-            if(len(contours)) == 0: continue
+            run_times += 1
+            print("run_times:",(run_times),"___________________________________")
+            if(len(contours)) == 0: 
+                
+                print("cann't find any contours,break",len(image))
+                self.car_stop(0,0)
+                cv2.imshow("target",image)
+                cv2.waitKey(50)
+                break
             try:
-                cX, cY = ap.findTarget(contours, image)
+                cX, cY, image_show= ap.findTarget(contours, image)
+                print("cX:",cX,"cY:",cY)
+                if len(image_show)>0:
+                    cv2.imshow("target",image_show)
+                    cv2.waitKey(1)
             except Exception as e:
                 traceback.print_exc()
 
             orderDataX, orderDataY = ap.makeOrder(cX, cY)
+            print("orderDataX:",orderDataX)
 
             if not orderDataX:
                 miss_times += 1
@@ -241,6 +264,9 @@ class MovingCar:
             else:
                 self.car_up(self.APForwardSpeed, 0)
                 print("move forward")
+            
+            finish_times += 1
+            print("finish_times:",(finish_times),"___________________________________")
 
             if orderDataX: miss_times = 0  # 已找到路，次数归0
             # cv2.imshow("v", image)
@@ -334,7 +360,8 @@ class MovingCar:
 if __name__ == "__main__":
     m = MovingCar()
     try:
-        m.getLastestPic()
+        m.camera_lookRoad(10,0)
+        #m.getLastestPic()
         # m.callback("autoPilot_sim", 3)
 
         # while True:

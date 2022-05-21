@@ -12,9 +12,10 @@ def imagePre(img):
     # 灰度处理
     gray_img = cv2.cvtColor(filter, cv2.COLOR_RGB2GRAY)
     # 二值化处理 thresh=230 去高光 maxVal=255(白）
-    t1, binary = cv2.threshold(gray_img, 230, 255, cv2.THRESH_BINARY)
+    t1, binary = cv2.threshold(gray_img, 225, 255, cv2.THRESH_BINARY)
     # 查找轮廓
     image, contours, hierarchy = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
     return contours, img
 
 
@@ -28,6 +29,8 @@ def findTarget(contours, img):
     target_area = -1
     target_length = -1
     # center_cX = 320  # 480*640
+    
+    image_show = []
 
     for i in range(0, len(contours) - 1):
         length = int(cv2.arcLength(contours[i], True))  # 周长
@@ -35,7 +38,7 @@ def findTarget(contours, img):
         points = len(contours[i])  # 轮廓点数
         area_rate = judgeByArea(contours[i])  # 轮廓面积与将其包围的最小矩形的面积之比
         # 设定符合轮廓的条件
-        if points < 500 and 1000 < area < 10000 and length >= 180 and area_rate>0.8:
+        if points < 500 and 1000 < area < 10000 and length >= 180 and area_rate>0:
             savedFlag = 1
             cX, cY = findCenter(contours[i])
             # print("\n target_idx:",target_idx," target_length:",
@@ -55,15 +58,15 @@ def findTarget(contours, img):
         #########################标记#################
     if target_idx >= 0:  # 如果找到导航点
         savedFlag = 2
-        drawAndSavePic(img, contours, target_cX, target_cY, str(target_idx), length, area, area_rate,isTarget=True)
+        image_show=drawAndSavePic(img, contours, target_cX, target_cY, str(target_idx), length, area, area_rate,isTarget=True)
 
         # cv2.imshow("img",img)
         # cv2.waitKey()
     ############################################
     if savedFlag == 0:
-        drawAndSavePic(img, contours)
+        image_show=drawAndSavePic(img, contours)
 
-    return target_cX, target_cY
+    return target_cX, target_cY,image_show
 
 
 def makeOrder(target_cX, target_cY):
@@ -147,8 +150,8 @@ def drawAndSavePic(img, contours, cX=0, cY=0, idx=-1, length=-1, area=-1, area_r
         f.write(picName + "\n")
     # work_path = os.path.join(dir, "now.jpg")
     # cv2.imwrite(work_path, img)
-    cv2.imshow("autoPilot", img)
-    cv2.waitKey()
+#    cv2.imshow("autoPilot", img)
+#    cv2.waitKey()
     return img
 
 

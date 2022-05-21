@@ -9,7 +9,8 @@ from xmlrpc.client import ServerProxy
 # import moveControl.move
 import time
 import json
-from urllib.request import urlretrieve
+#from urllib.request import urlretrieve
+import urllib
 import os
 
 
@@ -57,37 +58,35 @@ class CtrlClient:
 
 # 测试
 if __name__ == "__main__":
-    # ctrlClient = CtrlClient()
-    # ctrlClient.callAction("camera_left",1)
-    # ctrlClient.callAction("camera_stop", 0)
-    # ctrlClient.callAction("camera_reset")
+     ctrlClient = CtrlClient()
+     ctrlClient.callAction("camera_left",1)
+     ctrlClient.callAction("camera_stop", 0)
+     ctrlClient.callAction("camera_reset")
     # IP = "192.168.1.100"
     # with open("adr.json", "w") as f:
     #     json.dump(IP,f)
 
 
-    with open("../adr.json", "r") as f:
-        IP = json.load(f)
-        print(IP)
-
-    img_url = "http://{}:8080/?action=snapshot".format(IP)
-    print(img_url)
-    dir = os.path.abspath('.') + "\\img"
-    now_str = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-    # dir = "C:\\"
-    picName = now_str+'.jpg'
-    work_path = os.path.join(dir, picName)
-    print(work_path)
-    urlretrieve(img_url, work_path)
-
-    with open("picNames.txt","a") as f:
-        f.write(picName + "\n")
-
-    with open("picNames.txt","r") as f:
-        lines = f.read().splitlines()
-        print(lines)
-
-    print(int(len(lines)/3))
+#    with open("adr.json", "r") as f:
+#        IP = json.load(f)
+#        print(IP)
+#
+#    img_url = "http://{}:8080/?action=snapshot".format(IP)
+#    print(img_url)
+#    dir = os.path.abspath('../.') + "/img"
+#    now_str = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
+#    # dir = "C:\\"
+#    picName = now_str+'.jpg'
+#    work_path = os.path.join(dir, picName)
+#    print(work_path)
+#    urllib.urlretrieve(img_url, work_path)
+#
+#    with open("picNames.txt","a") as f:
+#        f.write(picName + "\n")
+#
+#    with open("picNames.txt","r") as f:
+#        lines = f.read().splitlines()
+#        print(lines)
 
 
     # picNameDic = {"name":[picName]}
